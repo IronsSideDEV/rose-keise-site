@@ -1,0 +1,4 @@
+# Enquanto o site estiver só no endereço de teste (pages.dev), pede aos buscadores para não indexar.
+# APAGUE este arquivo quando o domínio definitivo entrar no ar.
+/*
+  X-Robots-Tag: noindex, nofollow
