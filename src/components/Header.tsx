@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { nav } from "../content";
+import { brand, header, nav } from "../content";
+import { instagramLink, whatsappLink } from "../lib/links";
 import BrandMark from "./BrandMark";
+import InstagramIcon from "./InstagramIcon";
 
 export default function Header() {
   const [solid, setSolid] = useState(false);
@@ -52,6 +54,26 @@ export default function Header() {
             {item.label}
           </a>
         ))}
+        {/* No computador: só o ícone. No menu do celular: ícone e nome. */}
+        <a
+          className="nav__ig"
+          href={instagramLink()}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`${header.instagram} @${brand.instagramUser}`}
+        >
+          <InstagramIcon />
+          <span className="nav__ig-label">{header.instagram}</span>
+        </a>
+        <a
+          className="btn btn--light btn--small nav__cta"
+          href={whatsappLink()}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => setMenuOpen(false)}
+        >
+          {header.cta}
+        </a>
       </nav>
 
       <button

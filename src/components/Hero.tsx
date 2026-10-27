@@ -1,15 +1,19 @@
 import { useEffect, useRef } from "react";
 import { hero } from "../content";
+import Ornament from "./Ornament";
 
 const FRAME_COUNT = 79;
 const FRAME_W = 720;
 const FRAME_H = 1280;
+const LAST = FRAME_COUNT - 1;
 // Duração da animação que toca sozinha quando o site abre.
 const AUTOPLAY_MS = 3600;
-// Se os frames demorarem a carregar, começa a animação mesmo assim depois desse tempo.
+// A animação começa quando os primeiros frames estão prontos (não precisa esperar os 79).
+const AUTOPLAY_START_FRAMES = 24;
+// Se mesmo assim demorar, começa depois desse tempo (e espera os frames que faltam, se preciso).
 const AUTOPLAY_MAX_WAIT_MS = 3500;
-// Fração do scroll usada pela animação; o restante "segura" o último estado.
-const SCROLL_SPAN = 0.88;
+// Quantos frames baixam ao mesmo tempo (em ordem, para os primeiros chegarem logo).
+const MAX_PARALLEL_LOADS = 6;
 
 const framePath = (index: number) =>
   `${import.meta.env.BASE_URL}frames/frame-${String(index + 1).padStart(3, "0")}.webp`;
@@ -35,29 +39,21 @@ export default function Hero() {
     const images: (HTMLImageElement | undefined)[] = new Array(FRAME_COUNT).fill(undefined);
 
     let cancelled = false;
-    let raf = 0;
     let autoRaf = 0;
     let waitTimer = 0;
-    let finishedCount = 0;
+    let frontier = 0; // quantos frames seguidos (a partir do primeiro) já estão prontos
+    const done: boolean[] = new Array(FRAME_COUNT).fill(false);
+    let nextToLoad = 0;
+    let inFlight = 0;
     let autoStarted = false;
     let drawnKey = "";
+    let pos = 0; // posição atual da animação (em frames)
 
-    // Toca sozinha só na primeira entrada no topo da página (sem movimento reduzido).
+    // A animação toca uma única vez quando o site abre e fica parada no último frame (logo visível).
+    // Ela NÃO acompanha mais o scroll. Se a pessoa pede "reduzir movimento", ou se a página abre
+    // já rolada para baixo (ex.: ao recarregar), vai direto para o último frame.
     let autoplay = !reduced && window.scrollY <= 50;
-
-    // No topo da página o estado é o final da animação (logo visível).
-    // Ao rolar para baixo a animação volta (frasco fecha); ao voltar a rolar para cima, ela toca de novo.
-    const readScrollTarget = () => {
-      if (reduced) return 1;
-      const rect = section.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-      const raw = total > 0 ? -rect.top / total : 0;
-      const progress = Math.min(1, Math.max(0, raw / SCROLL_SPAN));
-      return 1 - progress;
-    };
-
-    let target = autoplay ? 0 : readScrollTarget();
-    let current = target;
+    let finished = !autoplay;
     section.dataset.ready = autoplay ? "false" : "true";
 
     // Índice do frame carregado mais próximo (desce primeiro, depois sobe).
@@ -74,13 +70,13 @@ export default function Hero() {
     // Desenha numa posição fracionada: mistura o frame atual com o próximo.
     // O vídeo tem ~24 quadros/s e a tela atualiza a 60 Hz; sem a mistura, cada quadro
     // fica 2 ou 3 atualizações na tela e o movimento "engasga". Com ela, fica contínuo.
-    const render = (pos: number) => {
-      const clamped = Math.min(FRAME_COUNT - 1, Math.max(0, pos));
+    const render = (p: number) => {
+      const clamped = Math.min(LAST, Math.max(0, p));
       const i0 = Math.floor(clamped);
       const f = Math.round((clamped - i0) * 16) / 16;
       const a = nearest(i0);
       if (a < 0) return;
-      const b = f > 0 ? nearest(Math.min(i0 + 1, FRAME_COUNT - 1)) : a;
+      const b = f > 0 ? nearest(Math.min(i0 + 1, LAST)) : a;
       const key = `${a}:${b}:${f}`;
       if (key === drawnKey) return;
       const imgA = images[a];
@@ -94,6 +90,11 @@ export default function Hero() {
         ctx.globalAlpha = 1;
       }
       drawnKey = key;
+    };
+
+    // Modo "parado": só mostra o último frame quando todos já chegaram (sem piscar frames intermediários).
+    const showFinal = () => {
+      if (frontier >= FRAME_COUNT) render(LAST);
     };
 
     // Fundo: estende as bordas do frame até as bordas da tela, suavizadas, para não haver emenda.
@@ -142,76 +143,67 @@ export default function Hero() {
       const extL = desktop ? fw * 0.14 : 0;
       const extR = desktop ? fw * 0.04 : 0;
       const extT = desktop ? 0 : fh * 0.14;
-      soft(0, 0, 2, FRAME_H, 1, 24, 0, ft, fl + extL, fh); // esquerda
-      soft(FRAME_W - 2, 0, 2, FRAME_H, 1, 24, fl + fw - extR, ft, w - (fl + fw - extR), fh); // direita
-      soft(0, 0, FRAME_W, 2, 24, 1, fl, 0, fw, ft + extT); // topo
-      soft(0, FRAME_H - 2, FRAME_W, 2, 24, 1, fl, ft + fh, fw, h - (ft + fh)); // base
+      soft(0, 0, 2, FRAME_H, 1, 14, 0, ft, fl + extL, fh); // esquerda
+      soft(FRAME_W - 2, 0, 2, FRAME_H, 1, 14, fl + fw - extR, ft, w - (fl + fw - extR), fh); // direita
+      soft(0, 0, FRAME_W, 2, 14, 1, fl, 0, fw, ft + extT); // topo
+      soft(0, FRAME_H - 2, FRAME_W, 2, 14, 1, fl, ft + fh, fw, h - (ft + fh)); // base
     };
 
-    // Suavização do scroll (só depois que a animação inicial terminou).
-    const step = () => {
-      raf = 0;
-      if (!autoplay) {
-        current += (target - current) * 0.16;
-        if (Math.abs(target - current) < 0.0004) current = target;
-      }
-      render(current * (FRAME_COUNT - 1));
-      if (!autoplay && current !== target) raf = requestAnimationFrame(step);
-    };
-    const kick = () => {
-      if (!raf) raf = requestAnimationFrame(step);
-    };
-
-    // Animação que toca sozinha quando o site abre.
+    // Animação que toca sozinha quando o site abre e termina parada no último frame.
     const beginAutoplay = () => {
       if (!autoplay || autoStarted || cancelled) return;
       autoStarted = true;
       window.clearTimeout(waitTimer);
-      let t0 = 0;
+      const speed = LAST / AUTOPLAY_MS; // quadros por milissegundo
+      let last = 0;
       const tick = (now: number) => {
         if (cancelled) return;
-        if (!t0) t0 = now; // começa no primeiro quadro da tela, sem salto
-        const p = Math.min(1, (now - t0) / AUTOPLAY_MS);
-        current = p;
-        target = p;
-        render(p * (FRAME_COUNT - 1));
-        if (p < 1) {
+        const dt = last ? Math.min(now - last, 64) : 0; // primeiro quadro sem salto
+        last = now;
+        // Nunca passa do último frame já pronto: em conexão lenta, espera ele chegar.
+        const limit = frontier >= FRAME_COUNT ? LAST : Math.max(0, frontier - 1);
+        pos = Math.min(pos + dt * speed, limit);
+        render(pos);
+        if (pos < LAST) {
           autoRaf = requestAnimationFrame(tick);
           return;
         }
-        // Terminou: a partir daqui quem manda é o scroll.
+        // Terminou: fica parada no último frame.
         autoplay = false;
+        finished = true;
         section.dataset.ready = "true";
-        target = readScrollTarget();
-        kick();
       };
       autoRaf = requestAnimationFrame(tick);
     };
 
-    const onScroll = () => {
-      if (autoplay) return;
-      target = readScrollTarget();
-      kick();
-    };
     const onResize = () => {
       paintBackdrop();
-      if (!autoplay) target = readScrollTarget();
       drawnKey = "";
-      kick();
+      if (finished) showFinal();
+      else render(pos);
     };
 
-    // Carrega e já decodifica cada frame, para o primeiro desenho de cada um não travar a animação.
+    // Carrega e já decodifica cada frame, em fila: os primeiros chegam primeiro e o
+    // primeiro desenho de cada frame não trava a animação.
+    const pump = () => {
+      while (inFlight < MAX_PARALLEL_LOADS && nextToLoad < FRAME_COUNT) loadFrame(nextToLoad++);
+    };
     const loadFrame = (index: number) => {
+      inFlight++;
       const img = new Image();
       img.decoding = "async";
       const finish = (ok: boolean) => {
+        inFlight--;
         if (cancelled) return;
         if (ok) images[index] = img;
-        finishedCount++;
+        done[index] = true;
+        while (frontier < FRAME_COUNT && done[frontier]) frontier++;
         if (ok && index === 0) paintBackdrop();
         drawnKey = "";
-        kick();
-        if (finishedCount === FRAME_COUNT) beginAutoplay();
+        if (finished) showFinal();
+        else if (!autoStarted) render(0); // mostra o primeiro frame enquanto os outros chegam
+        if (autoplay && frontier >= AUTOPLAY_START_FRAMES) beginAutoplay();
+        pump();
       };
       img.src = framePath(index);
       img.decode().then(
@@ -220,17 +212,14 @@ export default function Hero() {
       );
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     if (autoplay) waitTimer = window.setTimeout(beginAutoplay, AUTOPLAY_MAX_WAIT_MS);
-    for (let i = 0; i < FRAME_COUNT; i++) loadFrame(i);
+    pump();
 
     return () => {
       cancelled = true;
-      if (raf) cancelAnimationFrame(raf);
       if (autoRaf) cancelAnimationFrame(autoRaf);
       window.clearTimeout(waitTimer);
-      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
   }, []);
@@ -247,6 +236,17 @@ export default function Hero() {
           role="img"
           aria-label="Animação de um frasco de esmalte rosa sendo aberto, com a logo Rose & Keise Esmaltaria surgindo"
         />
+
+        <Ornament side="left" variant="hero" />
+        <Ornament side="right" variant="hero" />
+
+        {/* Legendas verticais decorativas, só em telas largas (ocupam as laterais do desktop). */}
+        <p className="hero__side hero__side--left" aria-hidden="true">
+          {hero.sideLeft}
+        </p>
+        <p className="hero__side hero__side--right" aria-hidden="true">
+          {hero.sideRight}
+        </p>
 
         <h1 className="sr-only">Rose &amp; Keise Esmaltaria. {hero.title}</h1>
 

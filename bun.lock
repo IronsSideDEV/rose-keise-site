@@ -6,7 +6,7 @@
       "name": "rose-keise-esmaltaria",
       "dependencies": {
         "@fontsource/cormorant-garamond": "^5.3.0",
-        "@fontsource/jost": "^5.3.0",
+        "@fontsource/hanken-grotesk": "^5.0.0",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
       },
@@ -22,7 +22,7 @@
   "packages": {
     "@fontsource/cormorant-garamond": ["@fontsource/cormorant-garamond@5.3.0", "", {}, "sha512-weuGsCirGVWBWqpt6YUp0yLThTe4G8YO45noq8wxeJCRvEpq5lFrxNMFSTxcyOyV5k5otzJ8guDzYegdYlcLMQ=="],
 
-    "@fontsource/jost": ["@fontsource/jost@5.3.0", "", {}, "sha512-lORv5y49hSoLVxjGb0qNuBzXvnaNYI3B94200uGPGJFei8fao6d6LLz2ziWbOZubGfZnibzuT6GVNX8fBw8WQQ=="],
+    "@fontsource/hanken-grotesk": ["@fontsource/hanken-grotesk@5.3.0", "", {}, "sha512-eiqAvcMT88tCMCBzn6qKgMHGLJKq3NEXO3+0y9JXqzyty2U6KZnaGtbfiQgzRAXfwFp559hJQ0zBgJ6d89AuTA=="],
 
     "@oxc-project/types": ["@oxc-project/types@0.155.0", "", {}, "sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q=="],
 

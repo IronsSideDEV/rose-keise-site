@@ -8,12 +8,14 @@ export default function WorksCarousel() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   // Quem pede "reduzir movimento" começa com o carrossel parado (e pode dar play).
-  const [playing, setPlaying] = useState(
-    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
+  const [playing, setPlaying] = useState(true);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(false);
+  }, []);
 
   // Só avança quando o carrossel está visível na tela.
   useEffect(() => {

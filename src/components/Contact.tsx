@@ -1,12 +1,18 @@
 import { brand, contact } from "../content";
+import AccentTitle from "./AccentTitle";
+import Ornament from "./Ornament";
 import { instagramLink, mapsDirectionsLink, mapsEmbedLink, mapsLink, whatsappLink } from "../lib/links";
 
 export default function Contact() {
   return (
     <section className="contact" id="contato">
+      <Ornament side="left" />
+      <Ornament side="right" />
       <div className="contact__inner">
         <div className="contact__text">
-          <h2>{contact.title}</h2>
+          <h2>
+            <AccentTitle text={contact.title} />
+          </h2>
           <p>{contact.text}</p>
           <div className="contact__actions">
             <a className="btn btn--light" href={whatsappLink()} target="_blank" rel="noreferrer">

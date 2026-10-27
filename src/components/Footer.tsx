@@ -50,7 +50,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <p className="footer__legal">
+      <p className="footer__legal" suppressHydrationWarning>
         © {new Date().getFullYear()} {brand.name} {brand.kind}. Todos os direitos reservados.
       </p>
     </footer>

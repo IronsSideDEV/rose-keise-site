@@ -24,6 +24,12 @@ export const brand = {
   hours: [] as { days: string; time: string }[],
 };
 
+// Botões do topo do site.
+export const header = {
+  cta: "Agendar",
+  instagram: "Instagram",
+};
+
 export const nav = [
   { label: "Trabalhos", href: "#trabalhos" },
   { label: "Sobre", href: "#sobre" },
@@ -33,9 +39,15 @@ export const nav = [
 export const hero = {
   title: "Unhas bem cuidadas, do jeito que você imagina.",
   secondaryCta: "Ver trabalhos",
+  // Legendas verticais nas laterais da abertura (só aparecem em telas largas).
+  sideLeft: "Esmaltação em gel · Alongamento · Banho em gel",
+  sideRight: `${brand.district} · ${brand.city}`,
 };
 
 export const about = {
+  eyebrow: `${brand.district} · São Paulo`,
+  cta: "Agendar horário",
+  instagramCta: "Instagram",
   title: "Um espaço calmo para cuidar das suas unhas.",
   paragraphs: [
     "A Rose & Keise é uma esmaltaria no Recanto Verde do Sol, em São Paulo, feita para quem gosta de unhas bem acabadas e de um atendimento sem pressa.",
