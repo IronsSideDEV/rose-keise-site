@@ -237,8 +237,10 @@ export default function Hero() {
           aria-label="Animação de um frasco de esmalte rosa sendo aberto, com a logo Rose & Keise Esmaltaria surgindo"
         />
 
-        <Ornament side="left" variant="hero" />
-        <Ornament side="right" variant="hero" />
+        <Ornament side="left" variant="hero" className="ornament--pair" />
+        <Ornament side="right" variant="hero" className="ornament--pair" />
+        {/* Só no celular: um ramo deitado que nasce da esquerda para a direita (o CSS esconde nas outras telas). */}
+        <Ornament side="left" variant="hero" className="ornament--vine" />
 
         {/* Legendas verticais decorativas, só em telas largas (ocupam as laterais do desktop). */}
         <p className="hero__side hero__side--left" aria-hidden="true">

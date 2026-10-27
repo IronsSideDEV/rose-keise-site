@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import type { Shape } from "../lib/ornamentData";
 
 // Os dados do desenho ficam num arquivo separado, baixado só em telas largas.
@@ -8,6 +8,9 @@ type Props = {
   side: "left" | "right";
   // "hero": aparece quando a animação de abertura termina. "section": aparece ao rolar até ela.
   variant?: "hero" | "section";
+  // Usados pelos ramos extras do celular (tamanho, posição, inclinação e atraso próprios).
+  className?: string;
+  style?: CSSProperties;
 };
 
 function renderShape(shape: Shape, key: string) {
@@ -19,7 +22,7 @@ function renderShape(shape: Shape, key: string) {
 }
 
 // Arabesco floral dourado (decorativo). Só aparece em telas largas, nas laterais.
-export default function Ornament({ side, variant = "section" }: Props) {
+export default function Ornament({ side, variant = "section", className, style }: Props) {
   const id = useId().replace(/[^a-zA-Z0-9]/g, "");
   const stroke = `gs${id}`;
   const fill = `gf${id}`;
@@ -66,7 +69,8 @@ export default function Ornament({ side, variant = "section" }: Props) {
   return (
     <svg
       ref={ref}
-      className={`ornament ornament--${side} ornament--${variant}`}
+      className={`ornament ornament--${side} ornament--${variant}${className ? ` ${className}` : ""}`}
+      style={style}
       data-show={shown}
       viewBox={data.ORNAMENT_VIEWBOX}
       aria-hidden="true"

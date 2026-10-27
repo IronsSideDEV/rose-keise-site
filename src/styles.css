@@ -920,16 +920,17 @@ h2 em {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   transition: stroke-dashoffset 2.8s cubic-bezier(0.45, 0.05, 0.2, 1);
+  transition-delay: var(--od, 0s);
 }
 .ornament .bloom {
   opacity: 0;
   transition: opacity 1.2s ease;
 }
 .ornament .bloom--leaves {
-  transition-delay: 1s;
+  transition-delay: calc(1s + var(--od, 0s));
 }
 .ornament .bloom--flowers {
-  transition-delay: 1.8s;
+  transition-delay: calc(1.8s + var(--od, 0s));
 }
 .ornament[data-show="true"] .draw,
 .hero[data-ready="true"] .ornament--hero .draw {
@@ -975,6 +976,33 @@ h2 em {
   .ornament--section.ornament--right {
     bottom: calc(2rem - var(--ow) * 1.7308);
     transform: rotate(-90deg);
+  }
+}
+
+/* Celular (até 819px): em vez do par nas laterais, um ramo só, deitado, maior, que se forma da
+   esquerda para a direita no céu da abertura. Computador e tablet não mudam. */
+.ornament--vine {
+  display: none;
+}
+@media (max-width: 819px) {
+  .ornament--hero.ornament--pair {
+    display: none;
+  }
+  .ornament--hero.ornament--vine {
+    --t: clamp(5rem, 24vw, 8rem); /* espessura; o comprimento é ~3,5x isso */
+    display: block;
+    top: calc(26vh - var(--t) * 1.7308);
+    top: calc(26svh - var(--t) * 1.7308);
+    left: calc(50% - var(--t) / 2);
+    width: var(--t);
+    opacity: 1;
+    transform: rotate(-90deg);
+    /* "Cortina" que abre da esquerda para a direita junto com o desenho dos traços */
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 3.4s cubic-bezier(0.4, 0, 0.3, 1) 0.2s;
+  }
+  .hero[data-ready="true"] .ornament--hero.ornament--vine {
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -1120,5 +1148,6 @@ h2 em {
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
   }
 }
