@@ -1,4 +1,22 @@
-# Enquanto o site estiver só no endereço de teste (pages.dev), pede aos buscadores para não indexar.
-# APAGUE este arquivo quando o domínio definitivo entrar no ar.
+# ---- REMOVER este bloco quando o domínio definitivo entrar no ar (libera a indexação) ----
 /*
   X-Robots-Tag: noindex, nofollow
+# ---- fim do bloco ----
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: DENY
+
+# Arquivos com nome gerado pelo build (mudam de nome a cada alteração): cache longo
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Frames da animação (não mudam): cache de 7 dias
+/frames/*
+  Cache-Control: public, max-age=604800
+
+# Fotos (se trocar uma foto mantendo o nome, leva até 1 dia para aparecer para quem já visitou)
+/images/*
+  Cache-Control: public, max-age=86400

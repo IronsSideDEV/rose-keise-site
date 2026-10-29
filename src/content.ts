@@ -4,6 +4,7 @@
 // ============================================================
 
 export type Product = { name: string; description: string };
+export type NoticeItem = { title: string; text: string };
 export type Work = { service: string; image: string; alt: string; width: number; height: number; position: string };
 
 export const brand = {
@@ -31,6 +32,7 @@ export const header = {
 };
 
 export const nav = [
+  { label: "Serviços", href: "#servicos" },
   { label: "Trabalhos", href: "#trabalhos" },
   { label: "Sobre", href: "#sobre" },
   { label: "Contato", href: "#contato" },
@@ -42,6 +44,12 @@ export const hero = {
   // Legendas verticais nas laterais da abertura (só aparecem em telas largas).
   sideLeft: "Esmaltação em gel · Alongamento · Banho em gel",
   sideRight: `${brand.district} · ${brand.city}`,
+};
+
+// Seção de apresentação dos serviços (título e texto).
+export const servicesSection = {
+  title: "Nossos serviços",
+  text: "Oferecemos uma variedade de serviços personalizados, desde manicures tradicionais até designers exclusivos, para transformar suas unhas em verdadeiras obras de arte. Nossa dedicação à qualidade garante resultados excepcionais que refletem sua individualidade.",
 };
 
 export const about = {
@@ -57,6 +65,34 @@ export const about = {
   caption: "Fachada rosa, na Rua Ilha de Capri, 225. É só procurar pelo número.",
 };
 
+// Marcas e produtos que a esmaltaria vende (só os nomes, em texto).
+export const brandsSection = {
+  title: "Marcas que vendemos",
+  text: "Além dos serviços, trabalhamos com produtos de beleza e cuidados de marcas que você já conhece.",
+  list: ["O Boticário", "Natura", "Avon", "Eudora", "Abelha Rainha"],
+  cta: "Perguntar pelos produtos",
+  message: "Olá! Quero saber mais sobre os produtos das marcas que vocês vendem.",
+};
+
+// Regras de agendamento (comunicado da cliente).
+export const notice = {
+  title: "Comunicado",
+  items: [
+    {
+      title: "Sinal de 50%",
+      text: "Trabalhamos com hora marcada. Ao agendar seu horário, peço 50% do valor do procedimento como sinal, para garantir sua vaga.",
+    },
+    {
+      title: "Reagendamento",
+      text: "Caso haja algum imprevisto, você tem 2 dias úteis para entrar em contato e reagendar. Caso contrário, o valor não será estornado.",
+    },
+    {
+      title: "Tolerância",
+      text: "A tolerância de atraso é de 15 minutos. Após esse tempo, não haverá mais atendimento.",
+    },
+  ] as NoticeItem[],
+};
+
 // Texto do botão de agendar que aparece em cada foto do carrossel.
 export const booking = {
   cta: "Agendar este serviço",
@@ -65,7 +101,7 @@ export const booking = {
 
 export const worksSection = {
   title: "Nossos trabalhos",
-  text: "Alguns dos serviços que realizamos. Gostou de algum? É só chamar no WhatsApp e agendar o seu.",
+  text: "Alguns dos trabalhos que realizamos. Gostou de algum? É só chamar no WhatsApp e agendar o seu.",
   instagramCta: "Veja mais no Instagram",
   productsTitle: "Produtos que usamos",
   worksLabel: "Trabalhos realizados",

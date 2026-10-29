@@ -1042,6 +1042,133 @@ h2 em {
   }
 }
 
+/* ---------- Serviços, Marcas e Comunicado ---------- */
+.services,
+.brands,
+.notice {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(4.5rem, 10vw, 9rem) var(--gutter);
+}
+.services {
+  background:
+    radial-gradient(ellipse 45% 60% at 100% 0%, rgba(232, 201, 184, 0.45), transparent 70%),
+    var(--paper);
+}
+.brands {
+  background:
+    radial-gradient(ellipse 45% 60% at 0% 100%, rgba(232, 201, 184, 0.4), transparent 70%),
+    var(--paper);
+}
+.notice {
+  background:
+    radial-gradient(ellipse 45% 60% at 0% 0%, rgba(232, 201, 184, 0.4), transparent 70%),
+    var(--paper);
+}
+.services__inner,
+.brands__inner,
+.notice__inner {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  text-align: center;
+}
+.services__inner > p,
+.brands__inner > p {
+  max-width: 40rem;
+  margin: 1.75rem auto 0;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: min(100%, 13rem);
+  margin: 1.75rem auto 0;
+  color: var(--gold-ink);
+}
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.divider__dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.brands__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 0;
+  margin-top: 2.5rem;
+}
+.brands__list li {
+  padding: 0 clamp(1rem, 3vw, 2.25rem);
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  line-height: 1.2;
+}
+.brands__list li + li {
+  border-left: 1px solid rgba(138, 95, 26, 0.45);
+}
+.brands__cta {
+  margin-top: 2.5rem;
+}
+
+.notice__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin: 3rem 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+.notice__item {
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(138, 95, 26, 0.55);
+}
+.notice__num {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--gold-ink);
+}
+.notice__item h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.55rem;
+  line-height: 1.2;
+}
+.notice__item p {
+  margin-top: 0.6rem;
+}
+
+@media (max-width: 819px) {
+  .brands__list {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .brands__list li + li {
+    border-left: 0;
+  }
+  .notice__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ---------- Rodapé ---------- */
 .footer {
   padding: clamp(3rem, 6vw, 5rem) var(--gutter) 1.5rem;
