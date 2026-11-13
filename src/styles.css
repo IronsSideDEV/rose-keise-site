@@ -163,12 +163,15 @@ h2 em {
   background: var(--champagne);
 }
 .btn--line {
-  background: transparent;
-  border-color: rgba(255, 248, 246, 0.7);
+  background: rgba(255, 248, 246, 0.08);
+  border-color: rgba(255, 248, 246, 0.55);
   color: var(--on-dark);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 .btn--line:hover {
-  background: rgba(255, 248, 246, 0.14);
+  background: rgba(255, 248, 246, 0.18);
 }
 .btn--dark {
   background: var(--plum);
@@ -212,9 +215,10 @@ h2 em {
 }
 .site-header[data-solid="true"],
 .site-header[data-menu="true"] {
-  background: rgba(51, 18, 29, 0.92);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(74, 28, 42, 0.8), rgba(51, 18, 29, 0.76));
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow: 0 1px 0 rgba(255, 248, 246, 0.14), 0 10px 30px -18px rgba(0, 0, 0, 0.55);
 }
 .brand {
   position: relative;
@@ -263,20 +267,74 @@ h2 em {
 .nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.1rem;
   margin-left: auto;
 }
-.nav a:not(.btn):not(.nav__ig) {
-  padding: 0.5rem 0;
+/* Abas de vidro: a pílula dourada desliza até a seção ativa. */
+.nav__tabs {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.3rem;
+  border: 1px solid rgba(255, 248, 246, 0.3);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 248, 246, 0.2), rgba(255, 248, 246, 0.07));
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 26px -14px rgba(51, 18, 29, 0.7);
+}
+.nav__pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--pill-w, 0);
+  height: var(--pill-h, 0);
+  transform: translate(var(--pill-x, 0), var(--pill-y, 0));
+  overflow: hidden;
+  border: 1px solid rgba(233, 199, 102, 0.75);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(233, 199, 102, 0.34), rgba(154, 91, 106, 0.55));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 8px 18px -8px rgba(51, 18, 29, 0.75);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.6s cubic-bezier(0.34, 1.45, 0.64, 1),
+    width 0.6s cubic-bezier(0.34, 1.45, 0.64, 1),
+    height 0.6s cubic-bezier(0.34, 1.45, 0.64, 1),
+    opacity 0.35s ease;
+}
+/* Reflexo de vidro por cima da pílula */
+.nav__pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 45%);
+}
+.nav__tabs[data-has="true"] .nav__pill {
+  opacity: 1;
+}
+.nav__tabs[data-snap="true"] .nav__pill {
+  transition: opacity 0.35s ease;
+}
+.nav__tabs a {
+  position: relative;
+  z-index: 1;
+  padding: 0.5rem 1.15rem;
+  border-radius: 999px;
   font-size: 0.98rem;
   letter-spacing: 0.02em;
+  color: rgba(255, 248, 246, 0.86);
   text-decoration: none;
-  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
-  transition: background-size 0.3s;
+  transition: color 0.3s, background-color 0.3s;
 }
-.nav a:not(.btn):not(.nav__ig):hover,
-.nav a[aria-current="true"] {
-  background-size: 100% 1px;
+.nav__tabs a:hover {
+  background: rgba(255, 248, 246, 0.12);
+  color: var(--on-dark);
+}
+.nav__tabs a[aria-current="true"] {
+  background: none;
+  color: var(--on-dark);
 }
 .nav__ig {
   display: inline-grid;
@@ -318,7 +376,18 @@ h2 em {
 }
 @media (min-width: 820px) and (max-width: 1000px) {
   .nav {
-    gap: 1.1rem;
+    gap: 0.75rem;
+  }
+  .nav__tabs a {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.9rem;
+  }
+  .nav__cta {
+    padding: 0 1rem;
+    letter-spacing: 0.12em;
+  }
+  .brand {
+    font-size: 1.7rem;
   }
 }
 .menu-toggle {
@@ -456,16 +525,30 @@ h2 em {
     flex-direction: column;
     gap: 0;
     padding: 0.5rem var(--gutter) 1.25rem;
-    background: rgba(51, 18, 29, 0.97);
+    background: linear-gradient(180deg, rgba(74, 28, 42, 0.985), rgba(51, 18, 29, 0.985));
+    border-bottom: 1px solid rgba(255, 248, 246, 0.14);
+    box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.6);
   }
   .site-header[data-menu="true"] .nav {
     display: flex;
   }
-  .nav a:not(.btn) {
-    padding: 0.9rem 0;
+  .nav__tabs {
+    flex-direction: column;
+    align-self: stretch;
+    align-items: stretch;
+    gap: 0.15rem;
+    padding: 0.4rem;
+    border-radius: 1.5rem;
+  }
+  .nav__tabs a {
+    padding: 0.85rem 1.25rem;
     font-size: 1.15rem;
   }
   .nav__ig {
+    align-self: flex-start;
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.4rem;
+    font-size: 1.15rem;
     display: flex;
     justify-content: flex-start;
     gap: 0.6rem;

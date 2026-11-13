@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { brand, header, nav } from "../content";
 import { instagramLink, whatsappLink } from "../lib/links";
 import BrandMark from "./BrandMark";
@@ -8,6 +8,7 @@ export default function Header() {
   const [solid, setSolid] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState("");
+  const tabsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const hero = document.getElementById("inicio");
@@ -37,6 +38,43 @@ export default function Header() {
     };
   }, []);
 
+  // Posiciona a pílula de vidro que desliza até a aba ativa (medida direto no DOM, sem re-render).
+  useEffect(() => {
+    const tabs = tabsRef.current;
+    if (!tabs) return;
+    let alive = true;
+    const place = () => {
+      if (!alive) return;
+      const link = active ? tabs.querySelector<HTMLElement>(`a[href="#${active}"]`) : null;
+      if (!link || link.offsetWidth === 0) {
+        tabs.dataset.has = "false";
+        return;
+      }
+      const firstTime = tabs.dataset.has !== "true";
+      // Na primeira vez a pílula aparece já no lugar, sem deslizar a partir do canto.
+      if (firstTime) tabs.dataset.snap = "true";
+      tabs.style.setProperty("--pill-x", `${link.offsetLeft}px`);
+      tabs.style.setProperty("--pill-y", `${link.offsetTop}px`);
+      tabs.style.setProperty("--pill-w", `${link.offsetWidth}px`);
+      tabs.style.setProperty("--pill-h", `${link.offsetHeight}px`);
+      tabs.dataset.has = "true";
+      if (firstTime) {
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            delete tabs.dataset.snap;
+          }),
+        );
+      }
+    };
+    place();
+    window.addEventListener("resize", place);
+    document.fonts.ready.then(place);
+    return () => {
+      alive = false;
+      window.removeEventListener("resize", place);
+    };
+  }, [active, menuOpen]);
+
   return (
     <header className="site-header" data-solid={solid} data-menu={menuOpen}>
       <a className="brand" href="#inicio" aria-label="Rose & Keise, ir para o início" onClick={() => setMenuOpen(false)}>
@@ -44,16 +82,19 @@ export default function Header() {
       </a>
 
       <nav className="nav" id="menu-principal" aria-label="Principal">
-        {nav.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            aria-current={active === item.href.slice(1) ? "true" : undefined}
-            onClick={() => setMenuOpen(false)}
-          >
-            {item.label}
-          </a>
-        ))}
+        <div className="nav__tabs" ref={tabsRef} data-has="false">
+          <span className="nav__pill" aria-hidden="true" />
+          {nav.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              aria-current={active === item.href.slice(1) ? "true" : undefined}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
         {/* No computador: só o ícone. No menu do celular: ícone e nome. */}
         <a
           className="nav__ig"
