@@ -213,8 +213,7 @@ h2 em {
   color: var(--on-dark);
   transition: background-color 0.35s;
 }
-.site-header[data-solid="true"],
-.site-header[data-menu="true"] {
+.site-header[data-solid="true"] {
   background: linear-gradient(180deg, rgba(74, 28, 42, 0.8), rgba(51, 18, 29, 0.76));
   -webkit-backdrop-filter: blur(18px) saturate(1.5);
   backdrop-filter: blur(18px) saturate(1.5);
@@ -264,134 +263,221 @@ h2 em {
 .brand:hover .brand__face {
   background-position: 0 0, 100% 0;
 }
-.nav {
+.header__actions {
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  gap: 0.75rem;
   margin-left: auto;
 }
-/* Abas de vidro: a pílula dourada desliza até a seção ativa. */
-.nav__tabs {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.1rem;
-  padding: 0.3rem;
-  border: 1px solid rgba(255, 248, 246, 0.3);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 248, 246, 0.2), rgba(255, 248, 246, 0.07));
-  -webkit-backdrop-filter: blur(14px) saturate(1.5);
-  backdrop-filter: blur(14px) saturate(1.5);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 26px -14px rgba(51, 18, 29, 0.7);
-}
-.nav__pill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--pill-w, 0);
-  height: var(--pill-h, 0);
-  transform: translate(var(--pill-x, 0), var(--pill-y, 0));
-  overflow: hidden;
-  border: 1px solid rgba(233, 199, 102, 0.75);
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(233, 199, 102, 0.34), rgba(154, 91, 106, 0.55));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 8px 18px -8px rgba(51, 18, 29, 0.75);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    transform 0.6s cubic-bezier(0.34, 1.45, 0.64, 1),
-    width 0.6s cubic-bezier(0.34, 1.45, 0.64, 1),
-    height 0.6s cubic-bezier(0.34, 1.45, 0.64, 1),
-    opacity 0.35s ease;
-}
-/* Reflexo de vidro por cima da pílula */
-.nav__pill::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(115deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 45%);
-}
-.nav__tabs[data-has="true"] .nav__pill {
-  opacity: 1;
-}
-.nav__tabs[data-snap="true"] .nav__pill {
-  transition: opacity 0.35s ease;
-}
-.nav__tabs a {
-  position: relative;
-  z-index: 1;
-  padding: 0.5rem 1.15rem;
-  border-radius: 999px;
-  font-size: 0.98rem;
-  letter-spacing: 0.02em;
-  color: rgba(255, 248, 246, 0.86);
-  text-decoration: none;
-  transition: color 0.3s, background-color 0.3s;
-}
-.nav__tabs a:hover {
-  background: rgba(255, 248, 246, 0.12);
-  color: var(--on-dark);
-}
-.nav__tabs a[aria-current="true"] {
-  background: none;
-  color: var(--on-dark);
-}
-.nav__ig {
+.header__ig {
   display: inline-grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgba(255, 248, 246, 0.4);
   border-radius: 50%;
+  background: rgba(255, 248, 246, 0.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
   text-decoration: none;
-  transition: background-color 0.25s;
+  transition: background-color 0.25s, transform 0.3s;
 }
-.nav__ig:hover {
-  background: rgba(255, 248, 246, 0.14);
+.header__ig:hover {
+  background: rgba(255, 248, 246, 0.22);
+  transform: translateY(-1px);
 }
-.nav__ig svg {
-  width: 1.3rem;
-  height: 1.3rem;
+.header__ig svg {
+  width: 1.25rem;
+  height: 1.25rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-/* No computador o nome some (só o ícone); no menu do celular ele aparece */
-.nav__ig-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-.nav__cta {
+.header__cta {
   min-height: 2.5rem;
   padding: 0 1.45rem;
   font-size: 0.78rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
-@media (min-width: 820px) and (max-width: 1000px) {
-  .nav {
-    gap: 0.75rem;
-  }
-  .nav__tabs a {
-    padding: 0.5rem 0.65rem;
-    font-size: 0.9rem;
-  }
-  .nav__cta {
-    padding: 0 1rem;
-    letter-spacing: 0.12em;
-  }
-  .brand {
-    font-size: 1.7rem;
-  }
+
+/* ---------- Barra flutuante (menu) ----------
+   Vidro com um recorte que acompanha a bolha dourada: ao trocar de seção, os dois deslizam juntos.
+   --i (posição) e --nr (raio do recorte) são animáveis; sem suporte, a troca é instantânea. */
+@property --i {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
 }
-.menu-toggle {
-  display: none;
+@property --nr {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+.dock {
+  --dock-w: min(calc(100vw - 2rem), 29rem);
+  --dock-h: 4.5rem;
+  --pad: 0.5rem;
+  --bubble: 3.1rem;
+  --notch: calc(var(--bubble) / 2 + 0.55rem);
+  --cell: calc((var(--dock-w) - 2 * var(--pad)) / var(--n));
+  --bx: calc(var(--pad) + (var(--i) + 0.5) * var(--cell));
+  --spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  position: fixed;
+  left: 50%;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 25;
+  width: var(--dock-w);
+  height: var(--dock-h);
+  opacity: 0;
+  transform: translate(-50%, 1.75rem) scale(0.95);
+  pointer-events: none;
+  transition:
+    --i 0.7s var(--spring),
+    --nr 0.5s var(--spring),
+    transform 0.8s var(--spring),
+    opacity 0.5s ease;
+}
+.dock[data-visible="true"] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.dock[data-has="true"] {
+  --nr: var(--notch);
+}
+/* Sombra separada: a máscara do vidro cortaria a sombra se ela ficasse no mesmo elemento. */
+.dock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2.25rem;
+  box-shadow: 0 22px 44px -18px rgba(30, 8, 16, 0.75);
+  pointer-events: none;
+}
+.dock__bar {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 248, 246, 0.26);
+  border-radius: 2.25rem;
+  background: linear-gradient(180deg, rgba(104, 44, 63, 0.8), rgba(51, 18, 29, 0.88));
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  -webkit-mask-image: radial-gradient(circle max(var(--nr), 0.01px) at var(--bx) 0, transparent 98.5%, #000 100%);
+  mask-image: radial-gradient(circle max(var(--nr), 0.01px) at var(--bx) 0, transparent 98.5%, #000 100%);
+}
+/* Contorno do recorte (só a metade de baixo do círculo) */
+.dock__ring {
+  position: absolute;
+  top: calc(var(--nr) * -1);
+  left: calc(var(--bx) - var(--nr));
+  width: calc(var(--nr) * 2);
+  height: calc(var(--nr) * 2);
+  border: 1px solid rgba(255, 248, 246, 0.3);
+  border-radius: 50%;
+  clip-path: inset(50% 0 0 0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.dock[data-has="true"] .dock__ring {
+  opacity: 1;
+}
+.dock__bubble {
+  position: absolute;
+  top: calc(var(--bubble) / -2 + 0.15rem);
+  left: calc(var(--bx) - var(--bubble) / 2);
+  width: var(--bubble);
+  height: var(--bubble);
+  border: 1px solid rgba(255, 248, 246, 0.6);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 24%, #fff2b4 0%, #e3bb52 40%, #b98a24 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 0 0 4px rgba(233, 199, 102, 0.14),
+    0 12px 24px -8px rgba(51, 18, 29, 0.85);
+  color: var(--plum-deep);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.35s ease, transform 0.6s var(--spring);
+  pointer-events: none;
+}
+.dock[data-has="true"] .dock__bubble {
+  opacity: 1;
+  transform: none;
+}
+.dock__bubble-icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.5) rotate(-24deg);
+  transition: opacity 0.25s ease, transform 0.5s var(--spring);
+}
+.dock__bubble-icon[data-on="true"] {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.12s;
+}
+.dock__bubble-icon svg {
+  width: 1.45rem;
+  height: 1.45rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dock__nav {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  padding: 0 var(--pad);
+}
+.dock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  padding-bottom: 0.65rem;
+  color: rgba(255, 248, 246, 0.8);
+  font: 500 0.62rem/1 var(--body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.3s;
+}
+.dock__item svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.4s var(--spring), opacity 0.25s ease;
+}
+.dock__item:hover {
+  color: var(--gold-soft);
+}
+.dock__item:hover svg {
+  transform: translateY(-3px);
+}
+/* O ícone do item ativo "sobe" para dentro da bolha. */
+.dock__item[aria-current="true"] {
+  color: var(--gold-soft);
+}
+.dock__item[aria-current="true"] svg {
+  opacity: 0;
+  transform: translateY(-0.9rem) scale(0.5);
 }
 
 /* ---------- Hero ---------- */
@@ -516,63 +602,9 @@ h2 em {
     justify-content: center;
   }
 
-  .nav {
-    position: absolute;
-    top: var(--header-h);
-    left: 0;
-    right: 0;
-    display: none;
-    flex-direction: column;
-    gap: 0;
-    padding: 0.5rem var(--gutter) 1.25rem;
-    background: linear-gradient(180deg, rgba(74, 28, 42, 0.985), rgba(51, 18, 29, 0.985));
-    border-bottom: 1px solid rgba(255, 248, 246, 0.14);
-    box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.6);
-  }
-  .site-header[data-menu="true"] .nav {
-    display: flex;
-  }
-  .nav__tabs {
-    flex-direction: column;
-    align-self: stretch;
-    align-items: stretch;
-    gap: 0.15rem;
-    padding: 0.4rem;
-    border-radius: 1.5rem;
-  }
-  .nav__tabs a {
-    padding: 0.85rem 1.25rem;
-    font-size: 1.15rem;
-  }
-  .nav__ig {
-    align-self: flex-start;
-    margin-top: 0.4rem;
-    padding: 0.5rem 0.4rem;
-    font-size: 1.15rem;
-    display: flex;
-    justify-content: flex-start;
-    gap: 0.6rem;
-    width: auto;
-    height: auto;
-    border-radius: 0;
-  }
-  .nav__ig:hover {
-    background: none;
-  }
-  .nav__ig-label {
-    position: static;
-    width: auto;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    clip: auto;
-  }
-  .nav__cta {
-    align-self: flex-start;
-    margin-top: 0.75rem;
-  }
-  .menu-toggle {
-    display: inline-flex;
+  .header__cta {
+    padding: 0 1.1rem;
+    letter-spacing: 0.14em;
   }
   .brand {
     font-size: 1.65rem;
@@ -1346,6 +1378,148 @@ h2 em {
       "works"
       "list";
     grid-template-rows: auto;
+  }
+}
+
+/* ---------- Vidro e vida em todo o site ---------- */
+/* Seções claras: bolhas de cor por trás, para o vidro ter o que desfocar. */
+.services,
+.brands,
+.notice {
+  isolation: isolate;
+}
+.services::before,
+.brands::before,
+.notice::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle 15rem at 12% 28%, rgba(201, 140, 152, 0.42), transparent 70%),
+    radial-gradient(circle 17rem at 90% 78%, rgba(233, 199, 102, 0.34), transparent 70%);
+  pointer-events: none;
+}
+
+/* Painéis de vidro das seções claras */
+.services__inner,
+.brands__inner {
+  max-width: 52rem;
+  padding: clamp(2.25rem, 6vw, 4rem) clamp(1.5rem, 5vw, 4rem);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34));
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: inset 0 1px 0 #fff, 0 28px 60px -34px rgba(74, 28, 42, 0.45);
+}
+.notice__item {
+  padding: 1.6rem 1.5rem 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 1.5rem;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.34));
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: inset 0 1px 0 #fff, 0 22px 44px -30px rgba(74, 28, 42, 0.45);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.notice__item:hover {
+  transform: translateY(-4px);
+  box-shadow: inset 0 1px 0 #fff, 0 30px 50px -28px rgba(74, 28, 42, 0.55);
+}
+
+/* Seções escuras: vidro claro sobre o bordô */
+.gallery__list,
+.contact__info {
+  display: grid;
+  gap: 0.75rem;
+}
+.gallery__list > div,
+.gallery__list > div:last-child,
+.contact__info > div,
+.contact__info > div:last-child {
+  border: 1px solid rgba(255, 248, 246, 0.2);
+  border-radius: 1.15rem;
+  background: linear-gradient(135deg, rgba(255, 248, 246, 0.13), rgba(255, 248, 246, 0.04));
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+.gallery__list > div {
+  padding: 1.1rem 1.35rem;
+}
+.contact__info > div {
+  padding: 1rem 1.35rem;
+}
+.works__btn {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Botões: brilho de vidro e leve elevação */
+.btn {
+  transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn--light,
+.btn--dark {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 22px -12px rgba(51, 18, 29, 0.6);
+}
+.btn--outline {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(74, 28, 42, 0.32);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 #fff;
+}
+
+/* WhatsApp flutuante em vidro; no celular sobe para não ficar atrás da barra */
+.wa-float {
+  background: rgba(51, 18, 29, 0.62);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 1px rgba(255, 248, 246, 0.28), 0 0.75rem 1.5rem -0.5rem rgba(51, 18, 29, 0.6);
+}
+@media (max-width: 819px) {
+  .wa-float {
+    bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 7.1rem);
+  }
+}
+/* Espaço no fim da página para a barra flutuante não cobrir o rodapé */
+.footer {
+  padding-bottom: calc(1.5rem + 6rem);
+}
+
+/* Entrada suave ao rolar (só onde o navegador suporta; nos outros, tudo aparece normalmente) */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .services__inner,
+    .brands__inner,
+    .notice__item,
+    .gallery__head,
+    .gallery__list > div,
+    .works,
+    .about__text,
+    .about__media,
+    .contact__text,
+    .contact__map {
+      animation: rise linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
   }
 }
 
