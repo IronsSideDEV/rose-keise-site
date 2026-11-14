@@ -304,9 +304,7 @@ h2 em {
   text-transform: uppercase;
 }
 
-/* ---------- Barra flutuante (menu) ----------
-   Vidro com um recorte que acompanha a bolha dourada: ao trocar de seção, os dois deslizam juntos.
-   --i (posição) e --nr (raio do recorte) são animáveis; sem suporte, a troca é instantânea. */
+/* ---------- Barra flutuante (menu) ---------- */
 @property --i {
   syntax: "<number>";
   inherits: true;
@@ -317,28 +315,31 @@ h2 em {
   inherits: true;
   initial-value: 0px;
 }
+
 .dock {
-  --dock-w: min(calc(100vw - 2rem), 29rem);
-  --dock-h: 4.5rem;
-  --pad: 0.5rem;
-  --bubble: 3.1rem;
-  --notch: calc(var(--bubble) / 2 + 0.55rem);
-  --cell: calc((var(--dock-w) - 2 * var(--pad)) / var(--n));
-  --bx: calc(var(--pad) + (var(--i) + 0.5) * var(--cell));
-  --spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* Medidas internas (para mudar, use --dock-width, --dock-height e --dock-bubble-size) */
+  --_w: var(--dock-width, min(calc(100vw - 2rem), 29rem));
+  --_h: var(--dock-height, 4.5rem);
+  --_pad: 0.5rem;
+  --_bubble: var(--dock-bubble-size, 3.1rem);
+  --_notch: calc(var(--_bubble) / 2 + 0.55rem);
+  --_cell: calc((var(--_w) - 2 * var(--_pad)) / var(--n));
+  --_bx: calc(var(--_pad) + (var(--i) + 0.5) * var(--_cell));
+  --_spring: var(--dock-spring, cubic-bezier(0.34, 1.4, 0.64, 1));
+
   position: fixed;
   left: 50%;
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  z-index: 25;
-  width: var(--dock-w);
-  height: var(--dock-h);
+  bottom: max(var(--dock-bottom, 1rem), env(safe-area-inset-bottom));
+  z-index: var(--dock-z, 25);
+  width: var(--_w);
+  height: var(--_h);
   opacity: 0;
   transform: translate(-50%, 1.75rem) scale(0.95);
   pointer-events: none;
   transition:
-    --i 0.7s var(--spring),
-    --nr 0.5s var(--spring),
-    transform 0.8s var(--spring),
+    --i 0.7s var(--_spring),
+    --nr 0.5s var(--_spring),
+    transform 0.8s var(--_spring),
     opacity 0.5s ease;
 }
 .dock[data-visible="true"] {
@@ -346,38 +347,47 @@ h2 em {
   transform: translate(-50%, 0);
   pointer-events: auto;
 }
+/* Sem item ativo (ex.: ainda no topo da página): a bolha e o recorte somem. */
 .dock[data-has="true"] {
-  --nr: var(--notch);
+  --nr: var(--_notch);
 }
-/* Sombra separada: a máscara do vidro cortaria a sombra se ela ficasse no mesmo elemento. */
+
+/* Sombra em elemento separado: a máscara do vidro cortaria uma sombra no mesmo elemento. */
 .dock::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: 2.25rem;
-  box-shadow: 0 22px 44px -18px rgba(30, 8, 16, 0.75);
+  box-shadow: 0 22px 44px -18px var(--dock-shadow, rgba(30, 8, 16, 0.75));
   pointer-events: none;
 }
+
+/* O vidro */
 .dock__bar {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(255, 248, 246, 0.26);
+  border: 1px solid var(--dock-border, rgba(255, 248, 246, 0.26));
   border-radius: 2.25rem;
-  background: linear-gradient(180deg, rgba(104, 44, 63, 0.8), rgba(51, 18, 29, 0.88));
+  background: linear-gradient(
+    180deg,
+    var(--dock-glass-top, rgba(104, 44, 63, 0.8)),
+    var(--dock-glass-bottom, rgba(51, 18, 29, 0.88))
+  );
   -webkit-backdrop-filter: blur(20px) saturate(1.6);
   backdrop-filter: blur(20px) saturate(1.6);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  -webkit-mask-image: radial-gradient(circle max(var(--nr), 0.01px) at var(--bx) 0, transparent 98.5%, #000 100%);
-  mask-image: radial-gradient(circle max(var(--nr), 0.01px) at var(--bx) 0, transparent 98.5%, #000 100%);
+  -webkit-mask-image: radial-gradient(circle max(var(--nr), 0.01px) at var(--_bx) 0, transparent 98.5%, #000 100%);
+  mask-image: radial-gradient(circle max(var(--nr), 0.01px) at var(--_bx) 0, transparent 98.5%, #000 100%);
 }
+
 /* Contorno do recorte (só a metade de baixo do círculo) */
 .dock__ring {
   position: absolute;
   top: calc(var(--nr) * -1);
-  left: calc(var(--bx) - var(--nr));
+  left: calc(var(--_bx) - var(--nr));
   width: calc(var(--nr) * 2);
   height: calc(var(--nr) * 2);
-  border: 1px solid rgba(255, 248, 246, 0.3);
+  border: 1px solid var(--dock-ring, rgba(255, 248, 246, 0.3));
   border-radius: 50%;
   clip-path: inset(50% 0 0 0);
   opacity: 0;
@@ -387,23 +397,30 @@ h2 em {
 .dock[data-has="true"] .dock__ring {
   opacity: 1;
 }
+
+/* A bolha que viaja entre os itens */
 .dock__bubble {
   position: absolute;
-  top: calc(var(--bubble) / -2 + 0.15rem);
-  left: calc(var(--bx) - var(--bubble) / 2);
-  width: var(--bubble);
-  height: var(--bubble);
-  border: 1px solid rgba(255, 248, 246, 0.6);
+  top: calc(var(--_bubble) / -2 + 0.15rem);
+  left: calc(var(--_bx) - var(--_bubble) / 2);
+  width: var(--_bubble);
+  height: var(--_bubble);
+  border: 1px solid var(--dock-bubble-border, rgba(255, 248, 246, 0.6));
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 24%, #fff8f6 0%, #f3d3cc 42%, #cf8f9d 100%);
+  background: radial-gradient(
+    circle at 30% 24%,
+    var(--dock-bubble-1, #fff8f6) 0%,
+    var(--dock-bubble-2, #f3d3cc) 42%,
+    var(--dock-bubble-3, #cf8f9d) 100%
+  );
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 0 0 4px rgba(243, 211, 204, 0.16),
-    0 12px 24px -8px rgba(51, 18, 29, 0.85);
-  color: var(--plum-deep);
+    0 0 0 4px var(--dock-bubble-glow, rgba(243, 211, 204, 0.16)),
+    0 12px 24px -8px var(--dock-shadow, rgba(30, 8, 16, 0.75));
+  color: var(--dock-bubble-ink, #33121d);
   opacity: 0;
   transform: scale(0.4);
-  transition: opacity 0.35s ease, transform 0.6s var(--spring);
+  transition: opacity 0.35s ease, transform 0.6s var(--_spring);
   pointer-events: none;
 }
 .dock[data-has="true"] .dock__bubble {
@@ -417,7 +434,7 @@ h2 em {
   place-items: center;
   opacity: 0;
   transform: scale(0.5) rotate(-24deg);
-  transition: opacity 0.25s ease, transform 0.5s var(--spring);
+  transition: opacity 0.25s ease, transform 0.5s var(--_spring);
 }
 .dock__bubble-icon[data-on="true"] {
   opacity: 1;
@@ -433,12 +450,14 @@ h2 em {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* Os itens clicáveis */
 .dock__nav {
   position: absolute;
   inset: 0;
   display: grid;
   grid-template-columns: repeat(var(--n), minmax(0, 1fr));
-  padding: 0 var(--pad);
+  padding: 0 var(--_pad);
 }
 .dock__item {
   display: flex;
@@ -447,8 +466,8 @@ h2 em {
   justify-content: flex-end;
   gap: 0.3rem;
   padding-bottom: 0.65rem;
-  color: rgba(255, 248, 246, 0.8);
-  font: 500 0.62rem/1 var(--body);
+  color: var(--dock-text, rgba(255, 248, 246, 0.8));
+  font: 500 0.62rem/1 var(--dock-font, system-ui, sans-serif);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   text-decoration: none;
@@ -463,21 +482,39 @@ h2 em {
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform 0.4s var(--spring), opacity 0.25s ease;
+  transition: transform 0.4s var(--_spring), opacity 0.25s ease;
 }
 .dock__item:hover {
-  color: #f6dcd6;
+  color: var(--dock-text-active, #f6dcd6);
 }
 .dock__item:hover svg {
   transform: translateY(-3px);
 }
 /* O ícone do item ativo "sobe" para dentro da bolha. */
 .dock__item[aria-current="true"] {
-  color: #f6dcd6;
+  color: var(--dock-text-active, #f6dcd6);
 }
 .dock__item[aria-current="true"] svg {
   opacity: 0;
   transform: translateY(-0.9rem) scale(0.5);
+}
+
+/* Tema da barra: vidro rosé claro com bolha em vinho (variáveis --dock-*; outros temas no kit). */
+.dock {
+  --dock-font: var(--body);
+  --dock-glass-top: rgba(248, 228, 223, 0.8);
+  --dock-glass-bottom: rgba(234, 198, 192, 0.86);
+  --dock-border: rgba(255, 255, 255, 0.75);
+  --dock-ring: rgba(255, 255, 255, 0.6);
+  --dock-text: rgba(90, 36, 52, 0.84);
+  --dock-text-active: #4a1c2a;
+  --dock-shadow: rgba(74, 28, 42, 0.45);
+  --dock-bubble-1: #c4637f;
+  --dock-bubble-2: #8f3550;
+  --dock-bubble-3: #5a1f33;
+  --dock-bubble-ink: #fff8f6;
+  --dock-bubble-border: rgba(255, 255, 255, 0.7);
+  --dock-bubble-glow: rgba(143, 53, 80, 0.18);
 }
 
 /* ---------- Hero ---------- */
