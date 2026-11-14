@@ -6,9 +6,12 @@ import InstagramIcon from "./InstagramIcon";
 
 // Ícones da barra flutuante (um por item do menu, na ordem de "nav" em content.ts).
 const ICONS: Record<string, string[]> = {
+  // frasco de esmalte: tampa fina, gargalo e corpo redondo com reflexo
   servicos: [
-    "M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9L11 3z",
-    "M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z",
+    "M10.8 2h2.4v6h-2.4z",
+    "M9.3 8h5.4v2.4H9.3z",
+    "M5 15a4.6 4.6 0 0 1 4.6-4.6h4.8A4.6 4.6 0 0 1 19 15v1.6a4.4 4.4 0 0 1-4.4 4.4H9.4A4.4 4.4 0 0 1 5 16.6V15z",
+    "M8.6 14.4c.2-.9.8-1.5 1.6-1.7",
   ],
   trabalhos: [
     "M6 4h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z",
